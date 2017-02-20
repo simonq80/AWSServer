@@ -9,7 +9,9 @@ eng = create_engine('mysql://root:rootpassword@localhost/maindb')
 @d.route('/')
 def download():
 	with eng.connect() as con:
-		return rs.fetchone()
+		rs = con.execute("SELECT * FROM Cars")
+		line = rs.fetchone()
+		return str(line)
 
 @d.route('/a')
 def upload():
@@ -19,7 +21,7 @@ def upload():
 	    con.execute(text('''CREATE TABLE Cars(Id INTEGER PRIMARY KEY, 
 	                 Name TEXT, Price INTEGER)'''))
 
-	    data = ( { "Id": 1, "Name": "Audi", "Price": 52642 },
+	    data = (
 	             { "Id": 2, "Name": "Mercedes", "Price": 57127 },
 	             { "Id": 3, "Name": "Skoda", "Price": 9000 },
 	             { "Id": 4, "Name": "Volvo", "Price": 29000 },
@@ -32,5 +34,5 @@ def upload():
 	        con.execute(text("""INSERT INTO Cars(Id, Name, Price) 
 	            VALUES(:Id, :Name, :Price)"""), **line)
 
-
+	return 'SUCCESS'
 
