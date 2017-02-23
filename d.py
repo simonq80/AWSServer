@@ -12,7 +12,7 @@ Base = declarative_base()
 session = sessionmaker(bind=engine)()
  
 class Links(Base):
-	__tablename__ = 'downloads'
+	__tablename__ = 'downloadtable'
 	id = Column(Integer, primary_key=True)
 	link = Column(String(250), nullable=False)
 	def addlink(self):
@@ -22,6 +22,7 @@ class Links(Base):
 	def getlinks(id):
 		return session.query(Links).filter(Links.id >= id).all()
 
+Base.metadata.create_all(engine)
 
 
 @d.route('/', methods=['GET'])
