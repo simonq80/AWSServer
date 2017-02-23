@@ -28,7 +28,11 @@ Base.metadata.create_all(engine)
 @d.route('/', methods=['GET'])
 def download():
 	last_id = request.args.get('last', 0, int)
-	return str(Links.getlinks(last_id))
+	objs = Links.getlinks(last_id)
+	toReturn = ""
+	for obj in objs:
+		toReturn += str(obj.link)
+	return toReturn
 
 
 @d.route('/a', methods=['GET'])
