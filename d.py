@@ -28,7 +28,7 @@ Base.metadata.create_all(engine)
 @d.route('/', methods=['GET'])
 def download():
 	last_id = request.args.get('last', 0, int)
-	return jsonify(Links.getlinks(last_id))
+	return str(Links.getlinks(last_id))
 
 
 @d.route('/a', methods=['GET'])
