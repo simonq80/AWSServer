@@ -1,37 +1,40 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import create_engine
-from sqlalchemy.sql import text
+from sqlalchemy.orm import sessionmaker
 
 d = Blueprint('d', __name__)
 
-eng = create_engine('mysql://root:rootpassword@localhost/maindb')
+engine = create_engine('mysql://root:rootpassword@localhost/maindb')
+
+Base = declarative_base
+session = sessionmaker(bind=engine)()
+ 
+class Links(Base):
+    __tablename__ = 'downloads'
+    # Here we define columns for the table person
+    # Notice that each column is also a normal Python instance attribute.
+    id = Column(Integer, primary_key=True)
+    link = Column(String(250), nullable=False)
+
+def addlink(link):
+	session.add(Links(link=link))
+	session.commit()
+def getlinks(id):
+	return session.query(Links).filter(Links.id >= id).all()
+
+
 
 @d.route('/', methods=['GET'])
 def download():
 	last_id = request.args.get('last', 0, int)
-	with eng.connect() as con:
-		rs = con.execute("SELECT * FROM Downloads WHERE Id > " + last_id)
-		line = rs.fetchall()
-		return jsonify(line)
+	return jsonify(getlinks(last_id))
 
 
 @d.route('/a', methods=['GET'])
 def upload():
-	with eng.connect() as con:
-
-	    con.execute(text('DROP TABLE IF EXISTS Downloads'))
-	    con.execute(text('''CREATE TABLE Cars(Id INTEGER PRIMARY KEY, 
-	                 Link TEXT)'''))
-
-	    data = (
-	             { "Id": 1, "Link": "google" },
-	             { "Id": 2, "Link": "google" },
-	             { "Id": 3, "Link": "google" },
-	             { "Id": 4, "Link": "google" }
-	    )
-	    for line in data:
-	        con.execute(text("""INSERT INTO Downloads(Id, Link) 
-	            VALUES(:Id, :Link)"""), **line)
-
-	return 'SUCCESS'
+	addLink('google')
+	addLink('facebook')
+	return 'Success'
 
