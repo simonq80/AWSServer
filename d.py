@@ -8,7 +8,7 @@ d = Blueprint('d', __name__)
 
 engine = create_engine('mysql://root:rootpassword@localhost/maindb')
 
-Base = declarative_base
+Base = declarative_base()
 session = sessionmaker(bind=engine)()
  
 class Links(Base):
