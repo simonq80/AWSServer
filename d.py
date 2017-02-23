@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
 from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 
@@ -6,33 +6,32 @@ d = Blueprint('d', __name__)
 
 eng = create_engine('mysql://root:rootpassword@localhost/maindb')
 
-@d.route('/')
+@d.route('/', methods=['GET'])
 def download():
+	last_id = request.args.get('last', 0, int)
 	with eng.connect() as con:
-		rs = con.execute("SELECT * FROM Cars")
-		line = rs.fetchone()
-		return str(line)
+		rs = con.execute("SELECT * FROM Downloads WHERE Id > " + last_id)
+		line = rs.fetchall()
+		return jsonify(line)
 
-@d.route('/a')
+
+@d.route('/a', methods=['GET'])
 def upload():
 	with eng.connect() as con:
 
-	    con.execute(text('DROP TABLE IF EXISTS Cars'))
+	    con.execute(text('DROP TABLE IF EXISTS Downloads'))
 	    con.execute(text('''CREATE TABLE Cars(Id INTEGER PRIMARY KEY, 
-	                 Name TEXT, Price INTEGER)'''))
+	                 Link TEXT)'''))
 
 	    data = (
-	             { "Id": 2, "Name": "Mercedes", "Price": 57127 },
-	             { "Id": 3, "Name": "Skoda", "Price": 9000 },
-	             { "Id": 4, "Name": "Volvo", "Price": 29000 },
-	             { "Id": 5, "Name": "Bentley", "Price": 350000 },
-	             { "Id": 6, "Name": "Citroen", "Price": 21000 },
-	             { "Id": 7, "Name": "Hummer", "Price": 41400 },
-	             { "Id": 8, "Name": "Volkswagen", "Price": 21600 }
+	             { "Id": 1, "Link": "google" },
+	             { "Id": 2, "Link": "google" },
+	             { "Id": 3, "Link": "google" },
+	             { "Id": 4, "Link": "google" }
 	    )
 	    for line in data:
-	        con.execute(text("""INSERT INTO Cars(Id, Name, Price) 
-	            VALUES(:Id, :Name, :Price)"""), **line)
+	        con.execute(text("""INSERT INTO Downloads(Id, Link) 
+	            VALUES(:Id, :Link)"""), **line)
 
 	return 'SUCCESS'
 
