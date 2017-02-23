@@ -13,14 +13,13 @@ session = sessionmaker(bind=engine)()
  
 class Links(Base):
     __tablename__ = 'downloads'
-
     id = Column(Integer, primary_key=True)
     link = Column(String(250), nullable=False)
 
 	def addlink(self):
 		session.add(self)
 		session.commit()
-
+	
 	@staticmethod
 	def getlinks(id):
 		return session.query(Links).filter(Links.id >= id).all()
