@@ -13,14 +13,12 @@ session = sessionmaker(bind=engine)()
  
 class Links(Base):
     __tablename__ = 'downloads'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
+
     id = Column(Integer, primary_key=True)
     link = Column(String(250), nullable=False)
 
-    @staticmethod
-	def addlink(link):
-		session.add(Links(link=link))
+	def addlink(self):
+		session.add(self)
 		session.commit()
 
 	@staticmethod
@@ -37,7 +35,7 @@ def download():
 
 @d.route('/a', methods=['GET'])
 def upload():
-	Links.addLink('google')
-	Links. addLink('facebook')
+	Links.addLink((Links(link='google'))
+	Links.addLink(Links(link-'facebook'))
 	return 'Success'
 
