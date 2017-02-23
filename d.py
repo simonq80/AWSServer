@@ -32,7 +32,7 @@ def download():
 
 @d.route('/a', methods=['GET'])
 def upload():
-	Links(link='google').addLink()
-	Links(link='facebook').addLink()
+	Links(link='google').addlink()
+	Links(link='facebook').addlink()
 	return 'Success'
 
