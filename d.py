@@ -22,7 +22,7 @@ class Links(Base):
 	def getlinks(id):
 		return session.query(Links).filter(Links.id >= id).all()
 
-Base.metadata.create_all(engine)
+#Base.metadata.create_all(engine)
 
 
 @d.route('/', methods=['GET'])
@@ -31,13 +31,13 @@ def download():
 	objs = Links.getlinks(last_id)
 	toReturn = ""
 	for obj in objs:
-		toReturn += str(obj.link)
+		toReturn += ('\n' + str(obj.link))
 	return toReturn
 
 
-@d.route('/a', methods=['GET'])
+@d.route('/', methods=['POST'])
 def upload():
-	Links(link='google').addlink()
-	Links(link='facebook').addlink()
+	toAdd = request.form['link']
+	Links(link=toAdd).addlink()
 	return 'Success'
 
