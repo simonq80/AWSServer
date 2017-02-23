@@ -18,23 +18,26 @@ class Links(Base):
     id = Column(Integer, primary_key=True)
     link = Column(String(250), nullable=False)
 
-def addlink(link):
-	session.add(Links(link=link))
-	session.commit()
-def getlinks(id):
-	return session.query(Links).filter(Links.id >= id).all()
+    @staticmethod
+	def addlink(link):
+		session.add(Links(link=link))
+		session.commit()
+
+	@staticmethod
+	def getlinks(id):
+		return session.query(Links).filter(Links.id >= id).all()
 
 
 
 @d.route('/', methods=['GET'])
 def download():
 	last_id = request.args.get('last', 0, int)
-	return jsonify(getlinks(last_id))
+	return jsonify(Links.getlinks(last_id))
 
 
 @d.route('/a', methods=['GET'])
 def upload():
-	addLink('google')
-	addLink('facebook')
+	Links.addLink('google')
+	Links. addLink('facebook')
 	return 'Success'
 
